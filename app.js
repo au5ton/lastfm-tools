@@ -1,13 +1,32 @@
 // app.js
 
+//modules
 const express = require('express');
 const app = express();
-const VERSION = require('./package.json').version;
+const fetch = require('node-fetch');
+const logger = require('au5ton-logger');
+const lastfm = require('./lib/lastfm');
 
-app.get('/', (req, res) => res.send('Hello World!'));
+//JSON data
+const VERSION = require('./package.json').version;
+const LYRICS = require('./lyrics.json');
+
+app.get('/', (req, res) => res.json(LYRICS[Math.floor(Math.random()*LYRICS.length)]));
 app.get('/version', (req, res) => res.json({
     app: VERSION,
     node: process.version
 }));
+
+// TODO: add additional endpoints
+app.get('/user', (req, res) => {
+    lastfm.getUser()
+    .then(results => {
+        res.json(results);
+    })
+    .catch(err => {
+        res.status(500).send('500: we had a problem');
+        logger.error(err);
+    })
+});
 
 app.listen(process.env.PORT || 3000, () => console.log('Example app listening on port '+(process.env.PORT || 3000)+'!'));

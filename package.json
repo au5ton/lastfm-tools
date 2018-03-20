@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/au5ton/lastfm-tools#readme",
   "dependencies": {
-    "express": "^4.16.3"
+    "au5ton-logger": "^1.3.4",
+    "express": "^4.16.3",
+    "node-fetch": "^2.1.1"
   }
 }
