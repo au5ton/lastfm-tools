@@ -1,0 +1,25 @@
+{
+  "name": "lastfm-tools",
+  "version": "1.0.0",
+  "description": "Simplifying specific queries for last.fm",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": "9.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/au5ton/lastfm-tools.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/au5ton/lastfm-tools/issues"
+  },
+  "homepage": "https://github.com/au5ton/lastfm-tools#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
