@@ -14,7 +14,8 @@ const LYRICS = require('./lyrics.json');
 app.get('/', (req, res) => res.json(LYRICS[Math.floor(Math.random()*LYRICS.length)]));
 app.get('/version', (req, res) => res.json({
     app: VERSION,
-    node: process.version
+    node: process.version,
+    env: process.env
 }));
 
 // TODO: add additional endpoints
