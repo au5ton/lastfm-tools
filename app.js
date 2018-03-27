@@ -16,10 +16,15 @@ app.get('/version', (req, res) => res.json({
     app: VERSION,
     node: process.version
 }));
+app.get('/help', (req, res) => res.json({
+    endpoints: [
+        '/allartists/:username'
+    ]
+}));
 
-// TODO: add additional endpoints
-app.get('/user', (req, res) => {
-    lastfm.getUser()
+//get all artists in their library
+app.get('/allartists/:username', (req, res) => {
+    lastfm.getAllArtistPages(req.params.username)
     .then(results => {
         res.json(results);
     })
