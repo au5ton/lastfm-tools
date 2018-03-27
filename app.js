@@ -18,13 +18,26 @@ app.get('/version', (req, res) => res.json({
 }));
 app.get('/help', (req, res) => res.json({
     endpoints: [
-        '/allartists/:username'
+        '/allartists/:username',
+        '/allalbums/:username'
     ]
 }));
 
 //get all artists in their library
 app.get('/allartists/:username', (req, res) => {
     lastfm.getAllArtistPages(req.params.username)
+    .then(results => {
+        res.json(results);
+    })
+    .catch(err => {
+        res.status(500).send('500: we had a problem');
+        logger.error(err);
+    })
+});
+
+//get all albums in their library
+app.get('/allalbums/:username', (req, res) => {
+    lastfm.getAllUserTopAlbums(req.params.username)
     .then(results => {
         res.json(results);
     })
