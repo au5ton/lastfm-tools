@@ -18,6 +18,7 @@ app.get('/version', (req, res) => res.json({
 
 //get all artists in their library
 app.get('/allartists/:username', (req, res) => {
+    res.set('Access-Control-Allow-Origin','*');
     lastfm.getAllUserArtists(req.params.username)
     .then(results => {
         res.json(results);
@@ -30,6 +31,7 @@ app.get('/allartists/:username', (req, res) => {
 
 //check if user has listened to album
 app.get('/checkalbumlistened/:username/:artist/:album', (req, res) => {
+    res.set('Access-Control-Allow-Origin','*');
     lastfm.checkAlbumListened(req.params.username, req.params.artist, req.params.album).then((results) => {
         res.json(results);
     }).catch(err => {
