@@ -3,7 +3,6 @@
 //modules
 const express = require('express');
 const app = express();
-const fetch = require('node-fetch');
 const logger = require('au5ton-logger');
 const lastfm = require('./lib/lastfm');
 
@@ -17,13 +16,25 @@ app.get('/version', (req, res) => res.json({
     node: process.version
 }));
 
-// TODO: add additional endpoints
-app.get('/user', (req, res) => {
-    lastfm.getUser()
+//get all artists in their library
+app.get('/allartists/:username', (req, res) => {
+    res.set('Access-Control-Allow-Origin','*');
+    lastfm.getAllUserArtists(req.params.username)
     .then(results => {
         res.json(results);
     })
     .catch(err => {
+        res.status(500).send('500: we had a problem');
+        logger.error(err);
+    })
+});
+
+//check if user has listened to album
+app.get('/checkalbumlistened/:username/:artist/:album', (req, res) => {
+    res.set('Access-Control-Allow-Origin','*');
+    lastfm.checkAlbumListened(req.params.username, req.params.artist, req.params.album).then((results) => {
+        res.json(results);
+    }).catch(err => {
         res.status(500).send('500: we had a problem');
         logger.error(err);
     })
