@@ -12,21 +12,6 @@ const queryParams = (params) => {
         .join('&');
 }
 
-// fetch(BASE_URL+'?'+queryParams({
-//     method: 'album.getInfo',
-//     api_key: process.env.LASTFM_API_KEY,
-//     user: 'au5ton',
-//     artist: 'Daft Punk',
-//     album: 'Discovery',
-//     format: 'json'
-// })).then(res => {
-//     return res.json();
-// }).catch(err => {
-//     console.warn(err)
-// }).then(data => {
-//     logger.log(data['album']['userplaycount'] !== undefined);
-// });
-
-lastfm.checkAlbum('FluffThePanda', 'Daft Punk', 'Discovery').then((bool) => {
+lastfm.checkAlbum('au5ton', 'Daft Punk', 'Discovery').then((bool) => {
     logger.log(bool);
 }).catch(err => console.log);
