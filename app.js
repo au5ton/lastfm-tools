@@ -3,9 +3,12 @@
 //modules
 const express = require('express');
 const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 const fetch = require('node-fetch');
 const logger = require('au5ton-logger');
 const lastfm = require('./lib/lastfm');
+
 
 //JSON data
 const VERSION = require('./package.json').version;
@@ -22,10 +25,13 @@ app.get('/help', (req, res) => res.json({
         '/allalbums/:username'
     ]
 }));
+app.get('/file', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
 
 //get all artists in their library
 app.get('/allartists/:username', (req, res) => {
-    lastfm.getAllArtistPages(req.params.username)
+    lastfm.getAllUserArtists(req.params.username)
     .then(results => {
         res.json(results);
     })
@@ -47,4 +53,8 @@ app.get('/allalbums/:username', (req, res) => {
     })
 });
 
-app.listen(process.env.PORT || 3000, () => console.log('Example app listening on port '+(process.env.PORT || 3000)+'!'));
+io.on('connection', (socket) => {
+    logger.log(socket);
+});
+
+http.listen(process.env.PORT || 3000, () => console.log('Example app listening on port '+(process.env.PORT || 3000)+'!'));
