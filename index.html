@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <title>Last.fm Album Listened Checker</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+        <style> 
+        .container {
+            text-align: center;
+        }
+        .prompt {
+            /* font-size: 18pt; */ 
+            text-align: inherit;
+        }
+        .prompt input[type=text] {
+            width: auto!important;
+        }
+        p {
+            padding-top: 20px;
+        }
+        a {
+            color: #fff;
+        }
+        </style>
+    </head>
+    <body class="teal darken-1">
+        <div class="container white-text">
+            <h3 class="prompt">
+                Has <input id="lastfmuser" type="text" placeholder="Last.fm Username"> listened to <input id="albumname" type="text" placeholder="Album"> by <input id="artistname" type="text" placeholder="Artist"> yet?
+            </h3>
+            <a id="checker" class="btn">Check</a>
+            <p>
+                [<a href="https://au5ton-lastfm-tools-api.herokuapp.com/checkalbumlistened/au5ton/Daft%20Punk/Discovery">API</a>]
+            </p>
+        </div>
+        <script>
+        
+        var button = document.getElementById('checker');
+
+        button.addEventListener('click', () => {
+            let username = document.getElementById('lastfmuser').value;
+            let album = document.getElementById('albumname').value;
+            let artist = document.getElementById('artistname').value;
+            fetch('https://au5ton-lastfm-tools-api.herokuapp.com/checkalbumlistened/'+encodeURI(username)+'/'+encodeURI(artist)+'/'+encodeURI(album)).then((res) => {
+                return res.json()
+            }).catch(err => alert).then((bool) => {
+                if(bool === true) {
+                    alert('Yes, '+username+' has listened to \"'+album+'\".');
+                }
+                else {
+                    alert('No, '+username+' hasn\'t.');
+                }
+            })
+        });
+
+        </script>
+    </body>
+</html>
