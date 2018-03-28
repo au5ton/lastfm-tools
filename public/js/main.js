@@ -3,17 +3,29 @@
 
 var client = io();
 
-client.on('assign_session', (data) => {
-    window.SESSION = data;
-});
+class QueueItem {
+    constructor(type, data) {
+        this.type = type;
+        this.data = data;
+    }
+}
 
-client.on('alert', (text) => {
-    alert(text);
-});
+client.emit('info_query', new QueueItem('checkalbum', {
+    user: 'au5ton',
+    artist: 'Daft Punk',
+    album: 'Discovery'
+}));
 
-const emit = (eventName, eventData) => {
-    client.emit(eventName, {
-        sess: window.SESSION,
-        data: eventData
-    });
-};
+client.on('info_query_status', (status) => {
+    console.log(status);
+    if(status === 'good') {
+        //you did fine
+    }
+    else {
+        //you messed up somewhere
+    }
+})
+
+client.on('response_ready', (data) => {
+    console.log('your thing is done')
+});

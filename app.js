@@ -6,6 +6,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const fetch = require('node-fetch');
+const EventEmitter = require('events');
 const logger = require('au5ton-logger');
 const lastfm = require('./lib/lastfm');
 const util = require('./lib/util');
@@ -14,7 +15,7 @@ const util = require('./lib/util');
 const VERSION = require('./package.json').version;
 const LYRICS = require('./lyrics.json');
 
-var Session = [];
+var Queue = [];
 
 app.use(express.static('public'));
 
@@ -64,11 +65,13 @@ Socket.io Protocol
 
 emission_name <=> description
 
+info_query <= sends a formal request that is added to `Session` and picked up by the request crawler
+    {
+        type: 'allalbums',
+        data: <arbitrary data>
+    }
 
-assign_session => provide the client with a unique session that the client includes with further requests
-    - created and destroyed on connection/disconnect
-
-request <= sends a formal request that is added to `Session` and picked up by the request crawler
+info_query_status => update client on if you're working on their request or not
 
 */
 
@@ -76,24 +79,60 @@ const emitTo = (sid, eventName, eventData) => {
     io.clients().sockets[sid].emit(eventName, eventData);
 };
 
-io.on('connection', (socket) => {
-    logger.warn(socket.id);
-    let client_list = Object.keys(io.clients().sockets);
-    for(let i = 0; i < client_list.length; i++) {
-        emitTo(client_list[i],'alert','test');
+class Bell extends EventEmitter {}
+const bell = new Bell();
+
+class QueueItem {
+    constructor(type, data) {
+        this.type = type;
+        this.data = data;
     }
-    let sess = util.generateSession();
-    Session.push({id: sess, requests: []});
-    socket.emit('assign_session',sess);
-    //logger.log('hello ',sess);
-    socket.on('disconnect', function(){
-        //logger.log('goodbye ',sess);
-        for(let i = 0; i < Session.length; i++) {
-            if(sess == Session[i].id) {
-                Session.splice(i,1);
+}
+
+const valid_queries = [
+    'checkalbum'
+];
+
+io.on('connection', (socket) => {
+    Queue.push({id: socket.id, requests: []});
+    
+    socket.on('info_query', (query) => {
+        //received a request for doing things
+        if(valid_queries.includes(query.type)) {
+            for(let e in Queue) {
+                if(Queue[e].id === socket.id) {
+                    Queue[e].requests.push(new QueueItem(query.type, query.data));
+                    socket.emit('info_query_status', 'good');
+                    bell.emit('notification');
+                }
+            }
+        }
+        else {
+            socket.emit('info_query_status', 'error');
+        }
+        
+    });
+    
+    socket.on('disconnect', function(socket){
+        for(let i = 0; i < Queue.length; i++) {
+            if(socket.id == Queue[i].id) {
+                Queue.splice(i,1);
             }
         }
     });
 });
+
+bell.on('notification', async () => {
+    logger.log(Queue);
+    for(let sock in Queue) {
+        for(let i in Queue[sock].requests) {
+            let item = Queue[sock].requests[i];
+
+            if(item.type === )
+
+        }
+    }
+});
+
 
 http.listen(process.env.PORT || 3000, () => console.log('Example app listening on port '+(process.env.PORT || 3000)+'!'));
