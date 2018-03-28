@@ -2,6 +2,6 @@
 Simplifying specific queries for last.fm
 
 ## Git Branches
-This project is separated by two separate branches. This `gh-pages` branch is automatically pushed to github pages`.
+This project is separated by two separate branches. This `gh-pages` branch is automatically pushed to `au5ton.github.io/lastfm-tools`.
 
 The branch containing the back-end code is `heroku`.
